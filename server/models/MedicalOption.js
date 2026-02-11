@@ -14,6 +14,10 @@ const medicalOptionSchema = new mongoose.Schema({
     type: String,
     default: 'Heart'
   },
+  image: {
+    type: String,
+    default: ''
+  },
   features: [String],
   isActive: {
     type: Boolean,

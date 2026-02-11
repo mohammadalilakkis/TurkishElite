@@ -38,9 +38,15 @@ export function TouristTours() {
       } else {
         setTours(data);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching tours:", error);
-      toast.error("Failed to load tours. Showing default tours.");
+      const isNetworkError = error?.code === "ERR_NETWORK" || error?.message === "Network Error";
+      toast.error(
+        isNetworkError
+          ? "Backend not running. Start it with: npm run dev:server (or npm run dev for both)"
+          : "Failed to load tours. Showing default tours.",
+        { duration: 6000 }
+      );
       setTours(getDefaultTours());
     } finally {
       setLoading(false);
@@ -113,11 +119,14 @@ export function TouristTours() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {tours.map((tour) => (
               <Card key={tour._id} className="overflow-hidden group hover:shadow-2xl transition-shadow duration-300">
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-64 overflow-hidden bg-red-50">
                   <img
                     src={tour.image}
                     alt={tour.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
                   />
                   <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full">
                     <div className="flex items-center gap-1">

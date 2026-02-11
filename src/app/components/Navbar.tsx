@@ -124,7 +124,7 @@ export function Navbar() {
                   size="sm"
                   variant="outline"
                   onClick={handleLogout}
-                  className={isScrolled ? "border-gray-300 text-gray-700 hover:bg-gray-50" : "border-white text-white hover:bg-white/10"}
+                  className={isScrolled ? "border-gray-300 bg-white text-gray-700 hover:bg-gray-50" : "border-white bg-transparent text-white hover:bg-white hover:text-gray-900"}
                 >
                   <LogOut className="h-4 w-4 mr-1" />
                   Logout
@@ -136,7 +136,7 @@ export function Navbar() {
                   size="sm"
                   variant="outline"
                   onClick={() => setShowLogin(true)}
-                  className={isScrolled ? "border-gray-300 text-gray-700 hover:bg-gray-50" : "border-white text-white hover:bg-white/10"}
+                  className={isScrolled ? "border-gray-300 bg-white text-gray-700 hover:bg-gray-50" : "border-white bg-transparent text-white hover:bg-white hover:text-gray-900"}
                 >
                   Login
                 </Button>
@@ -207,7 +207,7 @@ export function Navbar() {
                     </Button>
                   )}
                   <Button
-                    className="w-full"
+                    className="w-full border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
                     variant="outline"
                     onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
                   >
@@ -218,7 +218,7 @@ export function Navbar() {
               ) : (
                 <>
                   <Button
-                    className="w-full"
+                    className="w-full border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
                     variant="outline"
                     onClick={() => { setShowLogin(true); setIsMobileMenuOpen(false); }}
                   >

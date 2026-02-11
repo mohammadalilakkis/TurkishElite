@@ -31,7 +31,9 @@ router.post('/', validateContact, async (req, res) => {
       contact 
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Contact create error:', error);
+    const status = error.name === 'ValidationError' ? 400 : 500;
+    res.status(status).json({ message: error.message || 'Failed to save contact' });
   }
 });
 

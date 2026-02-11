@@ -2,6 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import Booking from '../models/Booking.js';
 import Tour from '../models/Tour.js';
+import { authenticate, isAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -51,8 +52,8 @@ router.post('/', validateBooking, async (req, res) => {
   }
 });
 
-// Get all bookings
-router.get('/', async (req, res) => {
+// Get all bookings (admin only)
+router.get('/', authenticate, isAdmin, async (req, res) => {
   try {
     const bookings = await Booking.find()
       .populate('tourId')
@@ -63,8 +64,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get single booking
-router.get('/:id', async (req, res) => {
+// Get single booking (admin only)
+router.get('/:id', authenticate, isAdmin, async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id).populate('tourId');
     if (!booking) {
@@ -76,8 +77,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Update booking status
-router.patch('/:id/status', async (req, res) => {
+// Update booking status (admin only)
+router.patch('/:id/status', authenticate, isAdmin, async (req, res) => {
   try {
     const { status } = req.body;
     const booking = await Booking.findByIdAndUpdate(
@@ -93,6 +94,19 @@ router.patch('/:id/status', async (req, res) => {
     res.json(booking);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+});
+
+// Delete booking (admin only)
+router.delete('/:id', authenticate, isAdmin, async (req, res) => {
+  try {
+    const booking = await Booking.findByIdAndDelete(req.params.id);
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+    res.json({ message: 'Booking deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 

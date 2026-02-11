@@ -39,16 +39,12 @@ api.interceptors.response.use(
       fetch('http://127.0.0.1:7247/ingest/c98bc6f1-adbd-4a48-a39e-d406a746af6a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api.ts:24',message:'API error response',data:{status:error.response.status,url:error.config?.url,pathname:window.location.pathname},timestamp:Date.now(),runId:'run1',hypothesisId:'C'})}).catch(()=>{});
       // #endregion
       if (error.response.status === 401) {
-        // #region agent log
-        fetch('http://127.0.0.1:7247/ingest/c98bc6f1-adbd-4a48-a39e-d406a746af6a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api.ts:29',message:'401 error - NOT clearing auth for admin routes',data:{currentPath:window.location.pathname,errorMessage:error.response?.data?.message},timestamp:Date.now(),runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-        // #endregion
-        // Don't auto-logout on admin routes - let the user see the error
-        if (window.location.pathname !== '/admin') {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+        // Clear invalid/expired token and redirect so user can log in again
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        if (window.location.pathname === '/admin') {
           window.location.href = '/';
         }
-        // For admin routes, just let the error propagate so user can see it
       }
     } else if (error.request) {
       // Request made but no response received
@@ -72,6 +68,18 @@ export const toursAPI = {
     const response = await api.get(`/tours/${id}`);
     return response.data;
   },
+  create: async (tourData: any) => {
+    const response = await api.post('/tours', tourData);
+    return response.data;
+  },
+  update: async (id: string, tourData: any) => {
+    const response = await api.put(`/tours/${id}`, tourData);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/tours/${id}`);
+    return response.data;
+  },
 };
 
 // Bookings API
@@ -90,8 +98,20 @@ export const bookingsAPI = {
     const response = await api.post('/bookings', bookingData);
     return response.data;
   },
+  getAll: async () => {
+    const response = await api.get('/bookings');
+    return response.data;
+  },
   getById: async (id: string) => {
     const response = await api.get(`/bookings/${id}`);
+    return response.data;
+  },
+  updateStatus: async (id: string, status: string) => {
+    const response = await api.patch(`/bookings/${id}/status`, { status });
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/bookings/${id}`);
     return response.data;
   },
 };

@@ -1,5 +1,6 @@
 import express from 'express';
 import Tour from '../models/Tour.js';
+import { authenticate, isAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -10,10 +11,20 @@ router.get('/', async (req, res) => {
     const query = {};
     
     if (category) {
-      query.category = category;
+      // "tourist" section shows both "tourist" and "both" category tours
+      if (category === 'tourist') {
+        query.category = { $in: ['tourist', 'both'] };
+      } else if (category === 'medical') {
+        query.category = { $in: ['medical', 'both'] };
+      } else {
+        query.category = category;
+      }
     }
     if (isActive !== undefined) {
       query.isActive = isActive === 'true';
+    } else if (category) {
+      // Public requests (with category) only return active tours
+      query.isActive = true;
     }
     
     const tours = await Tour.find(query).sort({ createdAt: -1 });
@@ -36,8 +47,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create tour (admin only - add auth later)
-router.post('/', async (req, res) => {
+// Create tour (admin only)
+router.post('/', authenticate, isAdmin, async (req, res) => {
   try {
     const tour = new Tour(req.body);
     await tour.save();
@@ -47,8 +58,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Update tour
-router.put('/:id', async (req, res) => {
+// Update tour (admin only)
+router.put('/:id', authenticate, isAdmin, async (req, res) => {
   try {
     const tour = await Tour.findByIdAndUpdate(
       req.params.id,
@@ -64,8 +75,8 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete tour
-router.delete('/:id', async (req, res) => {
+// Delete tour (admin only)
+router.delete('/:id', authenticate, isAdmin, async (req, res) => {
   try {
     const tour = await Tour.findByIdAndDelete(req.params.id);
     if (!tour) {

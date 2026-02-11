@@ -53,7 +53,7 @@ export function Hero() {
                     medicalSection.scrollIntoView({ behavior: 'smooth' });
                   }
                 }}
-                className="border-2 border-white text-white hover:bg-white hover:text-gray-900 backdrop-blur-sm px-8 py-6 text-lg"
+                className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-gray-900 backdrop-blur-sm px-8 py-6 text-lg"
               >
                 Medical Services
               </Button>
