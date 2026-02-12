@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Card } from "./ui/card";
 import { Clock, Users, Star, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
-import { toursAPI } from "../../services/api";
+import { toursAPI, authAPI } from "../../services/api";
 import { BookingDialog } from "./BookingDialog";
+import { LoginDialog } from "./LoginDialog";
+import { RegisterDialog } from "./RegisterDialog";
 import { toast } from "sonner";
 
 interface Tour {
@@ -23,6 +25,8 @@ export function TouristTours() {
   const [loading, setLoading] = useState(true);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [showRegisterDialog, setShowRegisterDialog] = useState(false);
 
   useEffect(() => {
     fetchTours();
@@ -90,8 +94,22 @@ export function TouristTours() {
   ];
 
   const handleBookNow = (tour: Tour) => {
+    if (!authAPI.isAuthenticated()) {
+      setSelectedTour(tour);
+      setShowLoginDialog(true);
+      toast.info("Please login or register to book a tour");
+      return;
+    }
     setSelectedTour(tour);
     setBookingDialogOpen(true);
+  };
+
+  const handleAuthSuccessForBooking = () => {
+    setShowLoginDialog(false);
+    setShowRegisterDialog(false);
+    if (selectedTour) {
+      setBookingDialogOpen(true);
+    }
   };
 
   return (
@@ -173,6 +191,18 @@ export function TouristTours() {
         open={bookingDialogOpen}
         onOpenChange={setBookingDialogOpen}
         tour={selectedTour}
+      />
+      <LoginDialog
+        open={showLoginDialog}
+        onOpenChange={(open) => { setShowLoginDialog(open); if (!open) setSelectedTour(null); }}
+        onSuccess={handleAuthSuccessForBooking}
+        onSwitchToRegister={() => { setShowLoginDialog(false); setShowRegisterDialog(true); }}
+      />
+      <RegisterDialog
+        open={showRegisterDialog}
+        onOpenChange={(open) => { setShowRegisterDialog(open); if (!open) setSelectedTour(null); }}
+        onSuccess={handleAuthSuccessForBooking}
+        onSwitchToLogin={() => { setShowRegisterDialog(false); setShowLoginDialog(true); }}
       />
     </section>
   );

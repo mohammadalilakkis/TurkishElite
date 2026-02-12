@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { bookingsAPI } from "../../services/api";
+import { bookingsAPI, authAPI } from "../../services/api";
 import { toast } from "sonner";
 
 interface BookingDialogProps {
@@ -29,6 +29,21 @@ export function BookingDialog({ open, onOpenChange, tour }: BookingDialogProps) 
     specialRequests: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (open && authAPI.isAuthenticated()) {
+      const user = authAPI.getCurrentUser();
+      if (user) {
+        setFormData((prev) => ({
+          ...prev,
+          firstName: user.firstName || prev.firstName,
+          lastName: user.lastName || prev.lastName,
+          email: user.email || prev.email,
+          phone: user.phone || prev.phone,
+        }));
+      }
+    }
+  }, [open]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

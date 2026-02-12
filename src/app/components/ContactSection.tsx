@@ -1,11 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Phone, Mail, MapPin, Clock, CheckCircle, AlertCircle } from "lucide-react";
-import { contactsAPI } from "../../services/api";
+import { contactsAPI, authAPI } from "../../services/api";
 import { toast } from "sonner";
+
+function fillFormFromUser(setFormData: (fn: (prev: any) => any) => void) {
+  const user = authAPI.getCurrentUser();
+  if (user) {
+    setFormData((prev: any) => ({
+      ...prev,
+      firstName: prev.firstName || user.firstName || "",
+      lastName: prev.lastName || user.lastName || "",
+      email: prev.email || user.email || "",
+      phone: prev.phone || user.phone || "",
+    }));
+  }
+}
 
 export function ContactSection() {
   const [formData, setFormData] = useState({
@@ -18,6 +31,13 @@ export function ContactSection() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+
+  useEffect(() => {
+    fillFormFromUser(setFormData);
+    const handler = () => fillFormFromUser(setFormData);
+    window.addEventListener("authChange", handler);
+    return () => window.removeEventListener("authChange", handler);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

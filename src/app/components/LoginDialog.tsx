@@ -10,9 +10,10 @@ interface LoginDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
+  onSwitchToRegister?: () => void;
 }
 
-export function LoginDialog({ open, onOpenChange, onSuccess }: LoginDialogProps) {
+export function LoginDialog({ open, onOpenChange, onSuccess, onSwitchToRegister }: LoginDialogProps) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -35,6 +36,7 @@ export function LoginDialog({ open, onOpenChange, onSuccess }: LoginDialogProps)
       
       await authAPI.login(formData);
       toast.success("Login successful!");
+      window.dispatchEvent(new CustomEvent('authChange'));
       onOpenChange(false);
       setFormData({ email: "", password: "" });
       if (onSuccess) onSuccess();
@@ -93,6 +95,14 @@ export function LoginDialog({ open, onOpenChange, onSuccess }: LoginDialogProps)
             />
           </div>
 
+          {onSwitchToRegister && (
+            <p className="text-sm text-center text-gray-500">
+              Don&apos;t have an account?{" "}
+              <button type="button" onClick={onSwitchToRegister} className="text-red-600 hover:underline font-medium">
+                Register
+              </button>
+            </p>
+          )}
           <div className="flex gap-4">
             <Button
               type="button"

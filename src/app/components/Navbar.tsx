@@ -250,6 +250,7 @@ export function Navbar() {
           setUser(authAPI.getCurrentUser());
           setShowLogin(false);
         }}
+        onSwitchToRegister={() => { setShowLogin(false); setShowRegister(true); }}
       />
       <RegisterDialog
         open={showRegister}
@@ -258,6 +259,7 @@ export function Navbar() {
           setUser(authAPI.getCurrentUser());
           setShowRegister(false);
         }}
+        onSwitchToLogin={() => { setShowRegister(false); setShowLogin(true); }}
       />
     </nav>
   );

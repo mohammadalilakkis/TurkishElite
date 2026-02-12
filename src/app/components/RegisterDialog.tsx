@@ -10,9 +10,10 @@ interface RegisterDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
+  onSwitchToLogin?: () => void;
 }
 
-export function RegisterDialog({ open, onOpenChange, onSuccess }: RegisterDialogProps) {
+export function RegisterDialog({ open, onOpenChange, onSuccess, onSwitchToLogin }: RegisterDialogProps) {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -53,6 +54,7 @@ export function RegisterDialog({ open, onOpenChange, onSuccess }: RegisterDialog
       });
 
       toast.success("Registration successful! You are now logged in.");
+      window.dispatchEvent(new CustomEvent('authChange'));
       onOpenChange(false);
       setFormData({
         firstName: "",
@@ -158,6 +160,14 @@ export function RegisterDialog({ open, onOpenChange, onSuccess }: RegisterDialog
             />
           </div>
 
+          {onSwitchToLogin && (
+            <p className="text-sm text-center text-gray-500">
+              Already have an account?{" "}
+              <button type="button" onClick={onSwitchToLogin} className="text-red-600 hover:underline font-medium">
+                Login
+              </button>
+            </p>
+          )}
           <div className="flex gap-4">
             <Button
               type="button"
