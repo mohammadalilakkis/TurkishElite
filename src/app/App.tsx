@@ -18,21 +18,11 @@ export default function App() {
   useEffect(() => {
     const checkRoute = () => {
       const path = window.location.pathname;
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/c98bc6f1-adbd-4a48-a39e-d406a746af6a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:18',message:'Route check started',data:{path,isAuthenticated:authAPI.isAuthenticated(),isAdmin:authAPI.isAdmin(),user:authAPI.getCurrentUser()},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       if (path === '/admin') {
         // Check if user is admin
         const isAuthenticated = authAPI.isAuthenticated();
         const isAdmin = authAPI.isAdmin();
-        const user = authAPI.getCurrentUser();
-        // #region agent log
-        fetch('http://127.0.0.1:7247/ingest/c98bc6f1-adbd-4a48-a39e-d406a746af6a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:25',message:'Admin route auth check',data:{isAuthenticated,isAdmin,user},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-        // #endregion
         if (!isAuthenticated || !isAdmin) {
-          // #region agent log
-          fetch('http://127.0.0.1:7247/ingest/c98bc6f1-adbd-4a48-a39e-d406a746af6a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.tsx:28',message:'Redirecting from admin - auth failed',data:{isAuthenticated,isAdmin},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-          // #endregion
           window.location.href = '/';
           return;
         }

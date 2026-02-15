@@ -60,9 +60,6 @@ export function AdminDashboard() {
   const loadData = async () => {
     try {
       setLoading(true);
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/c98bc6f1-adbd-4a48-a39e-d406a746af6a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminDashboard.tsx:43',message:'Loading dashboard data',data:{hasToken:!!localStorage.getItem('token')},timestamp:Date.now(),runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
       const [analyticsData, bookingsData, toursData, citiesData, medicalData, contactsData] = await Promise.all([
         analyticsAPI.getDashboard(),
         bookingsAPI.getAll(),
@@ -71,9 +68,6 @@ export function AdminDashboard() {
         medicalOptionsAPI.getAll(),
         contactsAPI.getAll(),
       ]);
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/c98bc6f1-adbd-4a48-a39e-d406a746af6a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminDashboard.tsx:51',message:'Dashboard data loaded successfully',data:{hasAnalytics:!!analyticsData},timestamp:Date.now(),runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
       setAnalytics(analyticsData);
       setBookings(Array.isArray(bookingsData) ? bookingsData : []);
       setTours(Array.isArray(toursData) ? toursData : []);
@@ -81,9 +75,6 @@ export function AdminDashboard() {
       setMedicalOptions(medicalData);
       setContacts(Array.isArray(contactsData) ? contactsData : []);
     } catch (error: any) {
-      // #region agent log
-      fetch('http://127.0.0.1:7247/ingest/c98bc6f1-adbd-4a48-a39e-d406a746af6a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'AdminDashboard.tsx:55',message:'Dashboard load error',data:{error:error?.message,status:error?.response?.status,statusText:error?.response?.statusText},timestamp:Date.now(),runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
       toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);

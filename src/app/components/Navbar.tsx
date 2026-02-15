@@ -110,9 +110,6 @@ export function Navbar() {
                   <Button
                     size="sm"
                     onClick={() => {
-                      // #region agent log
-                      fetch('http://127.0.0.1:7247/ingest/c98bc6f1-adbd-4a48-a39e-d406a746af6a',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Navbar.tsx:113',message:'Admin button clicked',data:{user:user?.email,role:user?.role},timestamp:Date.now(),runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-                      // #endregion
                       window.location.href = '/admin';
                     }}
                     className="bg-blue-600 hover:bg-blue-700 text-white"
