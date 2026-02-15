@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -97,9 +98,9 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
 
-// In production, serve the built frontend from the same server (single-host deploy)
-if (process.env.NODE_ENV === 'production') {
-  const distPath = path.join(__dirname, '..', 'dist');
+// Serve the built frontend when dist exists (single-host deploy on Render, etc.)
+const distPath = path.join(__dirname, '..', 'dist');
+if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
   app.get('*', (req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
