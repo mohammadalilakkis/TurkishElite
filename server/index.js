@@ -1,8 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import tourRoutes from './routes/tours.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 import bookingRoutes from './routes/bookings.js';
 import contactRoutes from './routes/contacts.js';
 import authRoutes from './routes/auth.js';
@@ -92,6 +96,15 @@ app.get('/api/analytics', authenticate, isAdmin, async (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
+
+// In production, serve the built frontend from the same server (single-host deploy)
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.join(__dirname, '..', 'dist');
+  app.use(express.static(distPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
